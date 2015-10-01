@@ -33,6 +33,9 @@ Download csv file documenting all vehicle recalls in Cannada.
 ## 04. ETL
 
 ## 05. Peculiarities
+  -removing manufacturer no as this caused floating point errors:
+  
+![](./Graphics/alterTable.png)
 
 ## 06. Visualizations
 
