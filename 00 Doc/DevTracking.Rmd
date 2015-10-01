@@ -4,3 +4,14 @@ output: html_document
 ---
 
 ![](./Graphics/Cowboy.jpg) 
+
+## 00. Create/Clone a github repository
+Go to SourceTree software. Create new git repository in DataVisualization folder (on same level as DrCannata folder).
+![](./Graphics/createrepo.png)
+
+If did not create the repo, clone the repo in SourceTree software.
+![](./Graphics/clonerepo.png)
+
+## 01. Create RStudio Project
+Create an RStudio project in the project folder.
+![](./Graphics/createproject01.png)
