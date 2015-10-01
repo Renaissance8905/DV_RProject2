@@ -23,3 +23,20 @@ Create an RStudio project in the project folder.
    **02 Visualizations**: where data is explored in ggplot 
    
 ![](./Graphics/fileset.png)
+
+## 03. Download .CSV File
+
+Download csv file documenting all vehicle recalls in Cannada.
+
+![](./Graphics/download.png)
+
+## 04. ETL
+
+## 05. Peculiarities
+
+## 06. Visualizations
+
+### Subset
+### Summary
+
+### Our Visualizations
