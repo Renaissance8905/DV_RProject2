@@ -15,3 +15,11 @@ If did not create the repo, clone the repo in SourceTree software.
 ## 01. Create RStudio Project
 Create an RStudio project in the project folder.
 ![](./Graphics/createproject01.png)
+
+## 02. Setup RStudio 
+ Create three folders in RStudio Project:  
+   **00 Doc**: where .Rmd lives  
+   **01 Data**: where data will be stored  
+   **02 Visualizations**: where data is explored in ggplot 
+   
+![](./Graphics/fileset.png)
