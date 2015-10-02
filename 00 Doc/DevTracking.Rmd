@@ -122,3 +122,17 @@ Comment:
 - The interesting point here is the abnormally high number of units recalled due to Airbag problem/failure in the period 2000-2010. The number is staggering compared to other scattered recalls (more than 700,000 units each year compared to the norm of below 200,000 units for other types of recall), occupying a conspicuous horizontal line at the top of the graph.
 
 - In fact, I wonder whether this might correspond to the major Takata airbag recall by Honda. The airbags, made by major parts supplier Takata, were mostly installed in cars from model year 2002 through 2008.
+
+
+### Plot #2: Recalls Affecting Child Safety
+
+- My dataframe is limited to those recalls whose descriptions make reference to a child or children, and excludes manufacturers of Car Seats and Booster Seats (because they are products solely for children, and their recalls would overshadow the rate at which other manufacturers' recalls were child-related)
+
+- This workflow looks at four variables within the aforementioned subset: Manufacturer, Number of Units Affected, Category, and Year (grouped by decade). It shows changes in frequency and scope of child-safety-related recalls across companies and time.
+
+```{R}
+df %>% filter(grepl("[Cc]hild|CHILD", COMMENT_ETXT)) %>% filter(CATEGORY_ETXT != "Child Car Seat" & CATEGORY_ETXT != "Booster Seat") %>% filter(YEAR > 1900) %>% mutate(decade = ntile(YEAR,5)) %>% group_by(MAKE_NAME_NM, YEAR, UNIT_AFFECTED_NBR, CATEGORY_ETXT, decade) %>%  ggplot(aes(x=MAKE_NAME_NM, y=UNIT_AFFECTED_NBR, color=CATEGORY_ETXT)) + geom_point() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title="Think Of The Children:\nRecalls Affecting Child Safety") + labs(x="Company(Child Seat Mfrs Excluded)", y="Scope of Recall (# Units Affected)") + facet_grid(~CATEGORY_ETXT~decade)
+```
+
+- In terms of total units recalled over the last 45 years, Ford is the clear frontrunner. However, Suzuki holds the distinction of having one of the two most widespread recalls, and having it in the 21st century-- at a point when most manufacturer's child-safety recalls were on the decline.
+
