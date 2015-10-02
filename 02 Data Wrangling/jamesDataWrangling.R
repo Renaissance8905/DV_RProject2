@@ -27,27 +27,8 @@ dfsysfail <- dplyr::union(dfsysfail, dfstructure)
 View (dfsysfail)
 
 #pass into ggplot
-dfsysfail %>% ggplot(aes(x = as.character(SYS_FAIL), y = as.numeric(as.character(YEAR)), color = MAKE_NAME_NM)) + facet_grid(.~CATEGORY_ETXT) + geom_point() + theme(axis.text.x=element_text(angle=50, size=10, vjust=0.5))
+dfsysfail %>% ggplot(aes(x = as.character(SYS_FAIL), y = as.numeric(as.character(YEAR)), color = MAKE_NAME_NM, show_guide = FALSE)) + facet_grid(.~CATEGORY_ETXT) + geom_point(size=3) + theme(axis.text.x=element_text(angle=50, size=10, vjust=0.5))
 
-
-
-  ggplot () +
-  coord_cartesian() +
-  scale_x_discrete() +
-  scale_y_continuous() +
-  facet_grid(CATEGORY_ETXT)+
-  labs(title="Recall by Company") +
-  labs (x='system', y='year') +
-  layer(data=dfjames2,
-         mapping=aes(x=as.character(SYSTEM_TYPE_ETXT), y=as.numeric(as.character(YEAR)), color=MAKE_NAME_NM),
-         stat="identity", 
-         stat_params=list(), 
-         geom="point",
-         geom_params=list(), 
-         #position=position_identity()
-         position=position_jitter(width=0.3, height=0)
-
-         )
   
   
   
