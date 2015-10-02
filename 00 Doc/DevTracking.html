@@ -94,11 +94,95 @@ img {
 </div>
 <div id="visualizations" class="section level2">
 <h2>06. Visualizations</h2>
-<div id="subset" class="section level3">
-<h3>Subset</h3>
-</div>
+<p>Creating dataframe from Oracle’s database</p>
+<pre class="r"><code>require(&quot;jsonlite&quot;)</code></pre>
+<pre><code>## Loading required package: jsonlite
+## 
+## Attaching package: 'jsonlite'
+## 
+## The following object is masked from 'package:utils':
+## 
+##     View</code></pre>
+<pre class="r"><code>require(&quot;RCurl&quot;)</code></pre>
+<pre><code>## Loading required package: RCurl
+## Loading required package: bitops</code></pre>
+<pre class="r"><code>dframe &lt;- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query=&quot;select * from recalls&quot;'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521/PDBF15DV.usuniversi01134.oraclecloud.internal', USER='cs329e_qan74', PASS='orcl_qan74', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON'), verbose = TRUE), ))</code></pre>
 <div id="summary" class="section level3">
 <h3>Summary</h3>
+<pre class="r"><code>summary(dframe)</code></pre>
+<pre><code>##                  CATEGORY_ETXT         MAKE_NAME_NM 
+##  Truck - Med.  and  H.D.:1142   FORD         : 268  
+##  Car                    : 989   INTERNATIONAL: 230  
+##  Motorhome              : 600   CHEVROLET    : 193  
+##  Travel Trailer         : 469   MACK         : 161  
+##  Bus                    : 440   FREIGHTLINER : 153  
+##  Light Truck  and  Van  : 385   THOMAS BUILT : 149  
+##  (Other)                :1515   (Other)      :4386  
+##                    MODEL_NAME_NM     SYSTEM_TYPE_ETXT
+##  CONVENTIONAL             :  23   Other      :1062   
+##  SAF-T-LINER C2 SCHOOL BUS:  23   Brakes     : 621   
+##  RAM                      :  22   Electrical : 539   
+##  4900                     :  21   Not Entered: 396   
+##  C SERIES                 :  20   Steering   : 382   
+##  H3-45 COACH              :  19   Fuel Supply: 365   
+##  (Other)                  :5412   (Other)    :2175   
+##     NOTIFICATION_TYPE_ETXT
+##  Safety Mfr    :3810      
+##  Recalls Audit : 429      
+##  Safety TC     : 375      
+##  Not Entered   : 368      
+##  Compliance Mfr: 321      
+##  Compliance TC : 173      
+##  (Other)       :  64      
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               COMMENT_ETXT 
+##  On certain motorhomes, conventional travel trailers and fifth wheel travel trailers equipped with a Dometic Corporation refrigerator, a fatigue crack can develop in the boiler tube.  This could allow the release of pressurized coolant solution into an area where an ignition source is present, which could result in a fire.  Correction; Dealers will replace the refrigerators boiler tube assembly.                                                                                                                                                                      : 156  
+##  Certain refrigerators used in Recreational Vehicles (RVs) contain either a sensing algorithm or a thermal switch to interrupt power when it detects high temperatures that could lead to a fire.  An insufficient response time can result in the power not being shut-off in sufficient time to prevent a fire, which could result in property damage and/or personal injury.  Correction; Dealers will install a thermocouple with a faster response time for all refrigerators with a sensing algorithm or a thermal switch.                                                    :  69  
+##  On certain recreational vehicles equipped with a Samsung microwave oven, an electrical short can occur in the microwave ovens membrane panel keypad causing the oven to activate without pressing any keypads.  This could result in excessive heat, smoke or possibly a fire.  Correction;  Samsung will notify its customers and repair the membrane panel keypad.  In the meantime, consumers should unplug their microwave ovens, if possible.  If the consumer is unable to unplug the microwave, they should leave the door ajar until the membrane panel keypad is replaced.:  64  
+##  On certain vehicles, the internal rubber check valve inside the Bendix SR-7 spring brake modulating valve can become deformed over time.  The effect of this defect is intermittent and presents a potential delay or failure in applying the parking brakes; potentially resulting in a vehicle roll away.  Should this occur, the unattended roll away vehicle could strike a bystander or cause property damage.  Correction; Dealers will install a check valve repair kit.                                                                                                    :  49  
+##  Certain travel trailers and motorhomes equipped with a Norcold gas/electric refrigerator model  442, 443, 452, EV452, 453, 462, EV462, 463, EV463, 482, EV482, 483, EV483, 874 and 875 manufactured between January 1987 and May 1995 may have a propane leak from the gas valve.  As the rubber seal within the gas valve ages, a leak may occur, allowing propane gas to accumulate in the burner area.  As the refrigerator relighter attempts to light the burner, this accumulated gas can cause a fire.  Correction;  Dealer will replace the gas valve.                     :  42  
+##  Certain off-road motorcycles, ATVs and competition motorcycles do not have the required bilingual warning label indicating that the vehicle is a restricted use motorcycle or an all-terrain vehicle and is not intended for use on public highways.  These vehicle were equipped with a label in one of the two official languages instead of one containing both French and English as required.  Correction; Since this does not pose any safety risk, no corrective action is required.                                                                                        :  35  
+##  (Other)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :5125  
+##  RECALL_NUMBER_NUM      YEAR       UNIT_AFFECTED_NBR
+##  Min.   : 198003   Min.   :-9999   Min.   :     0   
+##  1st Qu.:1998159   1st Qu.: 1995   1st Qu.:   120   
+##  Median :2006346   Median : 2003   Median :   949   
+##  Mean   :1995555   Mean   : 1987   Mean   : 24542   
+##  3rd Qu.:2010328   3rd Qu.: 2008   3rd Qu.:  8328   
+##  Max.   :2015385   Max.   : 2016   Max.   :834368   
+## </code></pre>
+</div>
+<div id="subset" class="section level3">
+<h3>Subset</h3>
+<p>A subset of recalls where number of units affected is greater than 400,000:</p>
+<pre class="r"><code>head(subset(dframe, as.numeric(as.character(UNIT_AFFECTED_NBR)) &gt; 400000))</code></pre>
+<pre><code>##      CATEGORY_ETXT MAKE_NAME_NM MODEL_NAME_NM       SYSTEM_TYPE_ETXT
+## 294            Car      PONTIAC    GRAND PRIX             Suspension
+## 295            Car      PONTIAC  GRAND LEMANS             Suspension
+## 296            Car   OLDSMOBILE CUTLASS SALON             Suspension
+## 918            Car      MERCURY        COUGAR Lights And Instruments
+## 919            Car      MERCURY        COUGAR Lights And Instruments
+## 1049           Car        ACURA       INTEGRA   Seats And Restraints
+##      NOTIFICATION_TYPE_ETXT
+## 294               Safety TC
+## 295               Safety TC
+## 296               Safety TC
+## 918               Safety TC
+## 919               Safety TC
+## 1049              Safety TC
+##                                                                                                                                                                                                                                                                                                                                                                                         COMMENT_ETXT
+## 294                                                                                                                                                                                                           On certain vehicles, the lower rear control arm to frame bolts may fracture causing lower control arm to drop free. If this happens vehicle damage or crash without warning may occur.
+## 295                                                                                                                                                                                                           On certain vehicles, the lower rear control arm to frame bolts may fracture causing lower control arm to drop free. If this happens vehicle damage or crash without warning may occur.
+## 296                                                                                                                                                                                                           On certain vehicles, the lower rear control arm to frame bolts may fracture causing lower control arm to drop free. If this happens vehicle damage or crash without warning may occur.
+## 918  NOTE; ALSO INCLUDES SOME MEDIUM AND HEAVY TRUCKS.  THESE VEHICLES MAY NOT COMPLY WITH C.M.V.S.S. 108 - LIGHTING.   DAYTIME RUNNING LIGHT MODULE MAY MALFUNCTION WHICH CAN RESULT IN DAYTIME  RUNNING LIGHTS THAT DIM, FLICKER OR GO OFF OR IN SOME INSTANCES MAY  REMAIN ON AFTER THE IGNITION IS TURNED OFF.  CORRECTION; DAYTIME RUNNING LIGHT MODULE WILL BE REPLACED ON AFFECTED  VEHICLES.
+## 919  NOTE; ALSO INCLUDES SOME MEDIUM AND HEAVY TRUCKS.  THESE VEHICLES MAY NOT COMPLY WITH C.M.V.S.S. 108 - LIGHTING.   DAYTIME RUNNING LIGHT MODULE MAY MALFUNCTION WHICH CAN RESULT IN DAYTIME  RUNNING LIGHTS THAT DIM, FLICKER OR GO OFF OR IN SOME INSTANCES MAY  REMAIN ON AFTER THE IGNITION IS TURNED OFF.  CORRECTION; DAYTIME RUNNING LIGHT MODULE WILL BE REPLACED ON AFFECTED  VEHICLES.
+## 1049      On certain vehicles, the platic front seatbelt release buttons may break allowing plastic pieces to fall into the buckle assembly.  If this should happen, a no latch, false latch or failure to unlatch condition could occur creating the risk of personal injury in the event of a crash or sudden stop.  Correction; Front seatbelt buckles will be repaired or replaced as necessary.
+##      RECALL_NUMBER_NUM YEAR UNIT_AFFECTED_NBR
+## 294            1981027 1979            486090
+## 295            1981027 1980            486090
+## 296            1981027 1981            486090
+## 918            1992077 1990            464543
+## 919            1992077 1991            464543
+## 1049           1995086 1989            423467</code></pre>
 </div>
 <div id="our-visualizations" class="section level3">
 <h3>Our Visualizations</h3>
