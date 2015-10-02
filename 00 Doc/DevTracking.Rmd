@@ -97,8 +97,8 @@ ggplot() +
 
 Comment:
 
-- The generated plot shows the number of units recalled by each type of system failure over the year of the maker Honda/Acura.
+- The generated plot shows the number of Honda/Acura units recalled by each type of system failure over the years.
 
-- The interesting point here is the abnormally high number of units recalled due to Airbag problem/failure in the period 2000-2010. The number is staggering compared to other scattered recalls (more than 700,000 units each year compared to the norm of below 200,000 for other types of recall), occupying a conspicuous horizontal line at the top of the graph.
+- The interesting point here is the abnormally high number of units recalled due to Airbag problem/failure in the period 2000-2010. The number is staggering compared to other scattered recalls (more than 700,000 units each year compared to the norm of below 200,000 units for other types of recall), occupying a conspicuous horizontal line at the top of the graph.
 
 - In fact, I wonder whether this might correspond to the major Takata airbag recall by Honda. The airbags, made by major parts supplier Takata, were mostly installed in cars from model year 2002 through 2008.
