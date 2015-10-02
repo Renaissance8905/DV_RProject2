@@ -33,13 +33,34 @@ Download csv file documenting all vehicle recalls in Cannada.
 ## 04. ETL
 
 ## 05. Peculiarities
-  -removing manufacturer no as this caused floating point errors:
+  -Encountered JSON parsing error when trying to fetch database
+
+![](./Graphics/jsonerror.png)
+
+  -After some sleuthing, pinpointed problem rows in database:
   
-![](./Graphics/alterTable.png)
+![](./Graphics/dbmystery.png)
+
+  -The values looked strange, but nothing about them explained why JSON had read them as infinity. The csv files held some answers though...
+  
+![](./Graphics/csvsolution1.png)
+![](./Graphics/csvsolution2.png)
+
+  -A-ha! Some values in the original csv contained some codes in a number-'E'-number format, and upon reformatting they had been parsed as scientific notation.
+  
+  -Very few rows even contained values in the offending column, so the simplest solution seemed to be to drop the column entirely from our data. There didn't seem to be any pattern to Manufacturer's recall codes anyway.
+  
+  -Oracle was reacting badly to the offending data, so we eventually opted to drop the table entirely and rebuild it with a modified SQL statement.
+  
+![](./Graphics/recreatetable.png)
+![](./Graphics/recreatetable2.png)
+
+  -While we were at it we pulled out four columns that were french translations of other columns. None of us speak French.
+
 
 ## 06. Visualizations
 
-Creating dataframe from Oracle's database
+-Creating dataframe from Oracle's database
 
 ```{r}
 require("jsonlite")
@@ -55,7 +76,7 @@ summary(dframe)
 
 ### Subset
 
-A subset of recalls where number of units affected is greater than 400,000:
+-A subset of recalls where number of units affected is greater than 400,000:
 
 ```{r, warning = FALSE}
 head(subset(dframe, as.numeric(as.character(UNIT_AFFECTED_NBR)) > 400000))
