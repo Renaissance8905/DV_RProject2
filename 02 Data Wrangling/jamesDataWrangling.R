@@ -27,7 +27,6 @@ dfsysfail <- dplyr::union(dfsysfail, dfstructure)
 View (dfsysfail)
 
 #pass into ggplot
-dfsysfail %>% ggplot(aes(x = as.character(SYS_FAIL), y = as.numeric(as.character(YEAR)), color = MAKE_NAME_NM, show_guide = FALSE)) + facet_grid(.~CATEGORY_ETXT) + geom_point(size=3, position_jitter(width=0.3, height=0)) + theme(axis.text.x=element_text(angle=50, size=10, vjust=0.5))
 
 dfsysfail
 

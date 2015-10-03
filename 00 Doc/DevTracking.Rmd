@@ -18,9 +18,10 @@ Create an RStudio project in the project folder.
 
 ## 02. Setup RStudio 
  Create three folders in RStudio Project:  
-   **00 Doc**: where .Rmd lives  
+   **00 Doc**: where .Rmd and graphics folder lives  
    **01 Data**: where data will be stored  
-   **02 Visualizations**: where data is explored in ggplot 
+   **02 DataWrangling**: where data is explored in ggplot 
+   **03 Visualizations**: Where visualizations are saved
    
 ![](./Graphics/fileset.png)
 
@@ -266,14 +267,10 @@ dfsysfail <- dplyr::union(dfengine, dfbrake)
 dfsysfail <- dplyr::union(dfsysfail, dfairbag)
 
 dfsysfail <- dplyr::union(dfsysfail, dfstructure)
-View (dfsysfail)
 ``` 
 
 ```{R}
 #pass into ggplot
-dfsysfail %>% ggplot(aes(x = as.character(SYS_FAIL), y = as.numeric(as.character(YEAR)), color = MAKE_NAME_NM, show_guide = FALSE)) + facet_grid(.~CATEGORY_ETXT) + geom_point(size=3, position_jitter(width=0.3, height=0)) + theme(axis.text.x=element_text(angle=50, size=10, vjust=0.5))
-
-dfsysfail
 
 ggplot() + 
   coord_cartesian() + 
@@ -298,9 +295,9 @@ ggplot() +
 
 - The reason that there's so few recalls for SUVs can be attributed to the fact that it was not until recently that they actually became popular enough that they merited their own car archetype. 
 
-- Another interesting pattern is that light trucks seem to have the least ammount of structural and engine issues. This holds true when for larger trucks when we compare them to cars as well. Possibly they are made sturdier, and for rougher usage, and that they therefore receive more attention during the design and engineering proccesses for issues that might arrise to poor welding and such. On the other hand, Medium and Heavy Trucks have had incredibly few recalls due to airbags over the years. I'm not sure what exactly could cause this, expect that maybe the problems with airbags stem from attempting to stuff a small bomb into a small chasie, and that with increasing vehicle size these problems are somewhat mitigated.
+- Another interesting pattern is that light trucks seem to have the least ammount of structural and engine issues. This holds true when for larger trucks when we compare them to cars as well. Possibly they are made sturdier, and for rougher usage, and that they therefore receive more attention during the design and engineering proccesses for issues that might arrise to poor welding and such. Additionally, Medium and Heavy Trucks have had incredibly few recalls due to airbags over the years. I'm not sure what exactly could cause this, expect that maybe the problems with airbags stem from attempting to stuff a small bomb into a small chasie, and that with increasing vehicle size these problems are somewhat mitigated.
 
-- Lastly, there has been a massive decrease in the number of recalls attributed to structure and engine issues since 2010 accross cars and trucks. SUVs and Motorcyles continue to have problems, but it would appear that a sigificant improbement to these two systems engineering has occured, and that the roads are at least that much safer because of it!
+- Lastly, there has been a massive decrease in the number of recalls attributed to structure and engine issues since 2010 accross cars and trucks. SUVs and Motorcyles continue to have problems, but it would appear that a sigificant improvement to these two systems engineering has occured, and that the roads are at least that much safer because of it!
 
 ### The End
   
