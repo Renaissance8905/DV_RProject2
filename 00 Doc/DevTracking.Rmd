@@ -31,7 +31,7 @@ Download csv file documenting all vehicle recalls in Cannada.
 ![](./Graphics/download.png)
 
 ## 04. ETL
-
+(This step may take a while to load)
 ```{R}
 # ETL Script for Vehicle Recall Data for DV_RProject2
 require(dplyr)
@@ -229,3 +229,79 @@ df %>% filter(grepl("[Cc]hild|CHILD", COMMENT_ETXT)) %>% filter(CATEGORY_ETXT !=
 
 - In terms of total units recalled over the last 45 years, Ford is the clear frontrunner. However, Suzuki holds the distinction of having one of the two most widespread recalls, and having it in the 21st century-- at a point when most manufacturer's child-safety recalls were on the decline.
 
+### Plot #03. Safety vs Archetype
+
+-For my visualization, I explored how some of the major systems failed amongst different types of vehicles. In particullar I studied the recalls due to brakes, engine, structure, and airbag failures vs the five major types of consumer vehicles on the road: cars, light trucks, medium/heavy trucks, SUVs, and motorcycles. This data was plotted over the years in order to see if any patterns emerge.
+
+-Unfortunatly, the manufacturers were very lazy, and the data in the SYSTEM_ETXT col, which is supposed to describe which system in particular the recall was targetting (engine, brake, etc etc), was often unspecified. In order to get around this, I used the grepl function to do a keyword search through the comments of each recall, using keywords customized to each system that fail (brake failure comments often used the word "brake", while structure failure comments never used the word "structure"). 
+
+-In order to do this, I created new dataframes that were subsets of the original filtered so that they only contained data of a particular system that failed. I then created a new col. in these datasets called SYS_FAIL that specified which particular system they had been filtered to (brakes, engine, structure, or airbags). I then used the set union function to tranform these four datasets to one, complete dataframe called dfsysfail, which was passed into ggplot.
+
+```{R}
+require(tidyr)
+require(dplyr)
+require(ggplot2)
+
+dfjames <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select * from recalls;"'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521/PDBF15DV.usuniversi01134.oraclecloud.internal', USER='cs329e_jht585', PASS='orcl_jht585', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON'), verbose = TRUE), ))
+```
+
+```{R}
+#create new datasets for each particular system failure to study. Use grepl to search for keywords in the comments col, and mutate to make new col that combines info from comments and system col. 
+
+dfbrake <- data.frame(dfjames %>% select(CATEGORY_ETXT, MAKE_NAME_NM, SYSTEM_TYPE_ETXT, YEAR, COMMENT_ETXT) %>% filter (CATEGORY_ETXT %in% c("Car", "Motorcycle", "SUV") |  grepl("Truck", CATEGORY_ETXT),YEAR != -9999, SYSTEM_TYPE_ETXT == "Brake" | grepl("Brake", COMMENT_ETXT) | grepl("BRAKE", COMMENT_ETXT) | grepl("brake", COMMENT_ETXT) ) %>% mutate (SYS_FAIL = "brake"))
+
+dfairbag <- data.frame(dfjames %>% select(CATEGORY_ETXT, MAKE_NAME_NM, SYSTEM_TYPE_ETXT, YEAR, COMMENT_ETXT) %>% filter (CATEGORY_ETXT %in% c("Car", "Motorcycle", "SUV") |  grepl("Truck", CATEGORY_ETXT), YEAR != -9999, SYSTEM_TYPE_ETXT == "airbag" | grepl("airbag", COMMENT_ETXT) | grepl("air bag", COMMENT_ETXT) | grepl("AIRBAG", COMMENT_ETXT) | grepl("AIR BAG", COMMENT_ETXT) ) %>% mutate (SYS_FAIL = "airbag"))
+
+dfstructure <- data.frame(dfjames %>% select(CATEGORY_ETXT, MAKE_NAME_NM, SYSTEM_TYPE_ETXT, YEAR, COMMENT_ETXT) %>% filter (CATEGORY_ETXT %in% c("Car", "Motorcycle", "SUV") |  grepl("Truck", CATEGORY_ETXT),YEAR != -9999, SYSTEM_TYPE_ETXT == "Structure", SYSTEM_TYPE_ETXT != "Brake", SYSTEM_TYPE_ETXT != "Engine", SYSTEM_TYPE_ETXT != "Airbag"| grepl("fracture", COMMENT_ETXT) | grepl("weld", COMMENT_ETXT) | grepl("crack", COMMENT_ETXT) | grepl("CRACK", COMMENT_ETXT) | grepl("CLIPS", COMMENT_ETXT) | grepl("hood", COMMENT_ETXT) | grepl("HOOD", COMMENT_ETXT) | grepl("pin", COMMENT_ETXT) | grepl("PIN", COMMENT_ETXT) | grepl("frame", COMMENT_ETXT) | grepl("mount", COMMENT_ETXT) ) %>% mutate(SYS_FAIL = "structure"))
+
+
+dfengine <- data.frame(dfjames %>% select(CATEGORY_ETXT, MAKE_NAME_NM, SYSTEM_TYPE_ETXT, YEAR, COMMENT_ETXT) %>% filter (CATEGORY_ETXT %in% c("Car", "Motorcycle", "SUV") |  grepl("Truck", CATEGORY_ETXT),YEAR != -9999, SYSTEM_TYPE_ETXT == "engine" | grepl("ENGINE", COMMENT_ETXT) | grepl("cylinder", COMMENT_ETXT) | grepl("CYLINDER", COMMENT_ETXT)) %>% mutate (SYS_FAIL = "engine"))
+```
+
+```{R}
+#Use Union set operator to connect all into one dataframe
+
+dfsysfail <- dplyr::union(dfengine, dfbrake)
+
+dfsysfail <- dplyr::union(dfsysfail, dfairbag)
+
+dfsysfail <- dplyr::union(dfsysfail, dfstructure)
+View (dfsysfail)
+``` 
+
+```{R}
+#pass into ggplot
+dfsysfail %>% ggplot(aes(x = as.character(SYS_FAIL), y = as.numeric(as.character(YEAR)), color = MAKE_NAME_NM, show_guide = FALSE)) + facet_grid(.~CATEGORY_ETXT) + geom_point(size=3, position_jitter(width=0.3, height=0)) + theme(axis.text.x=element_text(angle=50, size=10, vjust=0.5))
+
+dfsysfail
+
+ggplot() + 
+  coord_cartesian() + 
+  scale_x_discrete() +
+  scale_y_continuous() +
+  facet_grid(~CATEGORY_ETXT) +
+  labs(title='Recall by Type') +
+  labs(x="SYS_FAIL", y=paste("YEAR")) +
+  theme(axis.text.x=element_text(angle=50, size=10, vjust=0.5)) +
+  layer(data=dfsysfail, 
+        mapping=aes(x=SYS_FAIL, y=as.numeric(as.character(YEAR)), color=MAKE_NAME_NM), 
+        stat="identity", 
+        stat_params=list(), 
+        geom="point",
+        geom_params=list(), 
+        #position=position_identity()
+        position=position_jitter(width=0.2, height=0)
+)
+```
+
+- We can draw a couple interesting conclusions from this plot. Airbags, in particular, never saw a recall until the 1990's for cars, and even later for other vehicle types. This could be due to laws passed that required airbags, or it could be due to a change in public perception about the importance of airbags in their cars.
+
+- The reason that there's so few recalls for SUVs can be attributed to the fact that it was not until recently that they actually became popular enough that they merited their own car archetype. 
+
+- Another interesting pattern is that light trucks seem to have the least ammount of structural and engine issues. This holds true when for larger trucks when we compare them to cars as well. Possibly they are made sturdier, and for rougher usage, and that they therefore receive more attention during the design and engineering proccesses for issues that might arrise to poor welding and such. On the other hand, Medium and Heavy Trucks have had incredibly few recalls due to airbags over the years. I'm not sure what exactly could cause this, expect that maybe the problems with airbags stem from attempting to stuff a small bomb into a small chasie, and that with increasing vehicle size these problems are somewhat mitigated.
+
+- Lastly, there has been a massive decrease in the number of recalls attributed to structure and engine issues since 2010 accross cars and trucks. SUVs and Motorcyles continue to have problems, but it would appear that a sigificant improbement to these two systems engineering has occured, and that the roads are at least that much safer because of it!
+
+### The End
+  
+  
