@@ -1,7 +1,7 @@
 # ETL Script for Vehicle Recall Data for DV_RProject2
 require(dplyr)
 
-file_path <- ("~/DataVisualization/DV_RProject2/vrdb_full_monthly.csv")
+file_path <- ("~/DataVisualization/DV_RProject2/01 Data/vrdb_full_monthly.csv")
 
 # read raw csv into dataframe df
 df <- read.csv(file_path, stringsAsFactors = FALSE)
@@ -42,12 +42,13 @@ if( length(measures) > 1 || ! is.na(measures)) {
   }
 }
 
-# pares data down to 1/14th of original size (with evenly-spaced row selection)
-smalldf <- df %>% filter(row_number() %% 14 == 0)
-summary(smalldf)
+# uncomment to pare data down to 1/14th of original size (with evenly-spaced row selection)
+
+#smalldf <- df %>% filter(row_number() %% 14 == 0)
+#summary(smalldf)
 
 
-write.csv(smalldf, paste(gsub(".csv", "", file_path), ".reformatted.csv", sep=""), row.names=FALSE, na = "")
+write.csv(df, paste(gsub(".csv", "", file_path), ".long.reformatted.csv", sep=""), row.names=FALSE, na = "")
 
 tableName <- gsub(" +", "_", gsub("[^A-z, 0-9, ]", "", gsub(".csv", "", file_path)))
 sql <- paste("CREATE TABLE", tableName, "(\n-- Change table_name to the table name you want.\n")
